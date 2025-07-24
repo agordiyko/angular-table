@@ -1,0 +1,95 @@
+table {
+  width: 100%;
+}
+.mat-elevation-z8 {
+  box-shadow: none;
+}
+table.mat-mdc-table[_ngcontent-ng-c2958111329] {
+  --mat-table-background-color: #fff;
+  border-radius: 20px;
+}
+
+table.mat-mdc-table {
+  background-color: transparent;
+  border-radius: 20px;
+}
+
+.mat-mdc-header-row.mdc-data-table__header-row.cdk-header-row {
+  color: #2f4c97;
+}
+
+.mat-mdc-row.mdc-data-table__row.cdk-row {
+  color: var(--main-text-color);
+  transition: background var(--hover-transition);
+  &:has(.selected) {
+    background-color: #e9f0ff;
+  }
+  &:hover {
+    background-color: rgba(143, 175, 255, 0.08);
+  }
+}
+.mat-mdc-row.mdc-data-table__row.cdk-row:last-child {
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.mat-mdc-header-cell.mdc-data-table__header-cell {
+  border: none;
+  font-size: 13px;
+  letter-spacing: 0px;
+}
+.mat-mdc-cell.mdc-data-table__cell {
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 0px;
+  &:nth-child(2) {
+    cursor: pointer;
+    transition: color var(--hover-transition);
+    &:hover {
+      color: #3263c8;
+      text-decoration: underline;
+    }
+  }
+}
+
+.mat-mdc-row.mdc-data-table__row.cdk-row,
+.mat-mdc-header-row.mdc-data-table__header-row.cdk-header-row {
+  display: grid;
+  grid-template-columns: 45px 274px 313px 280px 280px;
+  column-gap: 17px;
+  align-items: center;
+  justify-content: start;
+  height: 47px;
+}
+
+.mat-mdc-row.mdc-data-table__row.cdk-row {
+  border-top: 1px solid #ababac;
+}
+
+.mat-mdc-cell.mdc-data-table__cell.cdk-cell:last-child,
+.mat-mdc-cell.mdc-data-table__cell.cdk-cell:nth-last-child(2),
+.mat-mdc-header-cell.mdc-data-table__header-cell:last-child,
+.mat-mdc-header-cell.mdc-data-table__header-cell:nth-last-child(2) {
+  text-align: right;
+}
+
+.mat-mdc-header-cell.mdc-data-table__header-cell.cdk-header-cell,
+.mat-mdc-cell.mdc-data-table__cell.cdk-cell {
+  display: inline-block;
+  & .mat-mdc-checkbox.mat-accent {
+    .mat-mdc-checkbox-ripple,
+    .mdc-checkbox__ripple,
+    .mat-mdc-checkbox-touch-target {
+      display: none;
+    }
+    .mdc-checkbox__background {
+      border-color: #bfbfbf;
+    }
+    .mdc-checkbox__native-control:enabled:indeterminate
+      ~ .mdc-checkbox__background,
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+      border-color: #343dff;
+    }
+  }
+}
