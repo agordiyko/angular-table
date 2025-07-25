@@ -10,9 +10,7 @@ import { SelectionService } from '../services/selection.service';
 export class DataService {
   private readonly localStorageKey = 'userData';
   private readonly apiUrl = 'https://test-data.directorix.cloud/task1';
-  private userDataSubject = new BehaviorSubject<UserElement[]>(
-    this.loadFromLocalStorage()
-  );
+  private userDataSubject = new BehaviorSubject<UserElement[]>([]);
 
   public userData$ = this.userDataSubject.asObservable();
 
@@ -24,23 +22,27 @@ export class DataService {
   }
 
   private async initializeData(): Promise<void> {
+    const localData = this.loadFromLocalStorage();
+
+    if (localData && localData.length > 0) {
+      this.userDataSubject.next(localData);
+      return;
+    }
     try {
-      const localData = this.loadFromLocalStorage();
+      const apiData = await this.apiService.get<{ users: UserElement[] }>(
+        this.apiUrl
+      );
+      const serverData = Array.isArray(apiData?.users) ? apiData.users : [];
 
-      if (localData && localData.length > 0) {
-        this.userDataSubject.next(localData);
-        return;
+      if (serverData.length > 0) {
+        this.saveToLocalStorage(serverData);
+        this.userDataSubject.next(serverData);
       }
-
-      const apiData = await this.apiService.get<UserElement[]>(this.apiUrl);
-
-      const safeData = Array.isArray(apiData) ? apiData : [];
-
-      this.userDataSubject.next(safeData);
-      this.saveToLocalStorage(safeData);
     } catch (error) {
-      console.error('Ошибка инициализации данных:', error);
-      this.userDataSubject.next([]);
+      console.error('Ошибка загрузки данных с сервера:', error);
+      if (localData.length === 0) {
+        this.userDataSubject.next([]);
+      }
     }
   }
 
