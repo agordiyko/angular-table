@@ -27,6 +27,7 @@ export class TableComponent implements OnInit {
     'Телефон',
   ];
   dataSource: UserElement[] = [];
+  isLoading = true;
 
   constructor(
     public dataService: DataService,
@@ -35,11 +36,21 @@ export class TableComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dataService.userData$.subscribe((users) => {
-      this.dataSource = Array.isArray(users) ? [...users] : [];
-      if (this.dataSource.length === 0) {
-        this.selectionService.clearSelection();
-      }
+    this.loadData();
+  }
+
+  private loadData(): void {
+    this.dataService.userData$.subscribe({
+      next: (users) => {
+        this.dataSource = users || [];
+        this.isLoading = false;
+        console.log('Data loaded:', this.dataSource);
+      },
+      error: (err) => {
+        console.error('Ошибка загрузки данных:', err);
+        this.isLoading = false;
+        this.dataSource = [];
+      },
     });
   }
 
