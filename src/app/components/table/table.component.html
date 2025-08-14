@@ -1,15 +1,21 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<table
+  mat-table
+  [dataSource]="dataSource"
+  matSort
+  (matSortChange)="sortData($event)"
+  class="mat-elevation-z8"
+>
   <ng-container matColumnDef="select">
     <th mat-header-cell *matHeaderCellDef>
       <mat-checkbox
-        [checked]="dataSource.length > 0 && isAllSelected()"
+        [checked]="dataSource.data.length > 0 && isAllSelected()"
         [indeterminate]="
-          dataSource.length > 0 &&
+          dataSource.data.length > 0 &&
           selectionService.selection.hasValue() &&
           !isAllSelected()
         "
         (change)="toggleAllRows()"
-        [disabled]="dataSource.length === 0"
+        [disabled]="dataSource.data.length === 0"
       ></mat-checkbox>
     </th>
     <td mat-cell *matCellDef="let row">
@@ -20,8 +26,8 @@
       ></mat-checkbox>
     </td>
   </ng-container>
-  <ng-container matColumnDef="Имя">
-    <th mat-header-cell *matHeaderCellDef>Имя</th>
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Имя</th>
     <td
       mat-cell
       *matCellDef="let element"
@@ -32,18 +38,18 @@
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="Фамилия">
-    <th mat-header-cell *matHeaderCellDef>Фамилия</th>
+  <ng-container matColumnDef="surname">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Фамилия</th>
     <td mat-cell *matCellDef="let element">{{ element.surname }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="E-mail">
-    <th mat-header-cell *matHeaderCellDef>E-mail</th>
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>E-mail</th>
     <td mat-cell *matCellDef="let element">{{ element.email }}</td>
   </ng-container>
 
-  <ng-container matColumnDef="Телефон">
-    <th mat-header-cell *matHeaderCellDef>Телефон</th>
+  <ng-container matColumnDef="phone">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Телефон</th>
     <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
   </ng-container>
 
