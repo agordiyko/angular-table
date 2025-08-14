@@ -21,23 +21,37 @@ export class ButtonsComponent {
     private selectionService: SelectionService
   ) {}
 
+  // Открываем диалоговое окно для создания нового пользователя
   openDialog() {
     this.dialog.open(NewDialogComponent, {
       data: { title: 'Новый клиент' },
     });
   }
+
+  // Открывает диалоговое окно подтверждения удаления и обрабатывает результат
   deleteDialog() {
+    // Проверяем, есть ли выделенные элементы
     if (this.selectionService.selection.selected.length > 0) {
+      // Открываем диалог подтверждения удаления
       const dialogRef = this.dialog.open(DeleteDialogComponent, {
-        data: { count: this.selectionService.selection.selected.length },
+        data: {
+          count: this.selectionService.selection.selected.length, // Передаем количество выделенных элементов
+        },
       });
 
+      // Подписываемся на событие закрытия диалога
       dialogRef.afterClosed().subscribe((confirmed) => {
+        // Если пользователь подтвердил удаление
         if (confirmed) {
+          // Получаем emails выделенных пользователей
           const emailsToDelete = this.selectionService.selection.selected.map(
             (user) => user.email
           );
+
+          // Удаляем пользователей через сервис данных
           this.dataService.deleteUsers(emailsToDelete);
+
+          // Очищаем выделение
           this.selectionService.selection.clear();
         }
       });
