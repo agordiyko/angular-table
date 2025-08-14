@@ -33,6 +33,7 @@ import { DataService } from '../../services/data.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class EditDialogComponent {
+  // Форма для редактирования данных пользователя
   editForm: FormGroup;
 
   constructor(
@@ -41,29 +42,53 @@ export class EditDialogComponent {
     private dataService: DataService,
     @Inject(MAT_DIALOG_DATA) public data: { user: UserElement }
   ) {
+    // Инициализация формы с валидацией
     this.editForm = this.fb.group({
       name: [data.user.name, [Validators.required, Validators.minLength(2)]],
       surname: [
         data.user.surname,
-        [Validators.required, Validators.minLength(2)],
+        [
+          Validators.required, // Обязательное поле
+          Validators.minLength(2), // Минимальная длина 2 символа
+        ],
       ],
-      email: [data.user.email, [Validators.required, Validators.email]],
-      phone: [data.user.phone, [Validators.pattern(/^(\+7|8)[\d\- ]{10,15}$/)]],
+      email: [
+        data.user.email,
+        [
+          Validators.required,
+          Validators.email, // Валидация email формата
+        ],
+      ],
+      phone: [
+        data.user.phone,
+        [
+          Validators.pattern(/^(\+7|8)[\d\- ]{10,15}$/), // Паттерн для российских номеров
+        ],
+      ],
     });
   }
 
+  // Обработчик сохранения изменений
   onSave(): void {
+    // Проверяем валидность формы перед сохранением
     if (this.editForm.valid) {
+      // Создаем обновленного пользователя
       const updatedUser: UserElement = {
         ...this.data.user,
         ...this.editForm.value,
       };
+
+      // Сохраняем изменения через сервис данных
       this.dataService.updateUser(updatedUser);
+
+      // Закрываем диалог и передаем обновленные данные
       this.dialogRef.close(updatedUser);
     }
   }
 
+  // Обработчик отмены редактирования
   onCancel(): void {
+    // Просто закрываем диалог без передачи данных
     this.dialogRef.close();
   }
 }
