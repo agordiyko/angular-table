@@ -39,9 +39,13 @@ import { UserElement } from '../../common/interface/user';
   encapsulation: ViewEncapsulation.None,
 })
 export class NewDialogComponent implements OnInit {
+  // Форма для ввода данных нового пользователя
   myForm: FormGroup;
+  // Массив для хранения данных пользователей
   userData: UserElement[] = [];
+  // Заголовок диалогового окна
   dialogTitle: string = 'Новый клиент';
+  // Ключ для хранения данных в localStorage
   private localStorageKey = 'userData';
 
   constructor(
@@ -50,21 +54,43 @@ export class NewDialogComponent implements OnInit {
     private dataService: DataService,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; user: UserElement }
   ) {
+    // Установка кастомного заголовка, если он передан в данных
     if (data?.title) {
       this.dialogTitle = data.title;
     }
+
+    // Инициализация формы с валидацией
     this.myForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      name: [
+        '',
+        [
+          Validators.required, // Обязательное поле
+          Validators.minLength(2), // Минимальная длина 2 символа
+        ],
+      ],
       surname: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.pattern(/^(\+7|8)[\d\- ]{10,15}$/)]],
+      email: [
+        '',
+        [
+          Validators.required, // Валидация формата email
+          Validators.email,
+        ],
+      ],
+      phone: [
+        '',
+        [
+          Validators.pattern(/^(\+7|8)[\d\- ]{10,15}$/), // Валидация российского номера телефона
+        ],
+      ],
     });
   }
 
+  // Метод жизненного цикла - инициализация компонента
   ngOnInit() {
     this.loadFromLocalStorage();
   }
 
+  // Загрузка данных пользователей из localStorage
   private loadFromLocalStorage(): void {
     const savedData = localStorage.getItem(this.localStorageKey);
 
@@ -72,6 +98,7 @@ export class NewDialogComponent implements OnInit {
       try {
         this.userData = JSON.parse(savedData);
 
+        // Дополнительная проверка типа данных
         if (!Array.isArray(this.userData)) {
           throw new Error('Данные в localStorage не являются массивом');
         }
@@ -79,7 +106,7 @@ export class NewDialogComponent implements OnInit {
         console.log('Успешно загружено из localStorage:', this.userData);
       } catch (error) {
         console.error('Ошибка загрузки из localStorage:', error);
-        this.clearAndReset();
+        this.clearAndReset(); // Очистка при ошибке
       }
     } else {
       console.log('Локальные данные не найдены');
@@ -87,36 +114,48 @@ export class NewDialogComponent implements OnInit {
     }
   }
 
+  // Очистка localStorage и сброс данных
   private clearAndReset(): void {
     localStorage.removeItem(this.localStorageKey);
     this.userData = [];
   }
 
+  // Обработчик отправки формы
   onSubmit() {
     if (this.myForm.valid) {
+      // Создание объекта нового пользователя
       const newUser: UserElement = {
         name: this.myForm.value.name,
         surname: this.myForm.value.surname,
         email: this.myForm.value.email,
-        phone: this.myForm.value.phone || '',
+        phone: this.myForm.value.phone || '', // Пустая строка, если телефон не указан
       };
+
+      // Добавление пользователя через сервис
       this.dataService.addUser(newUser);
+
+      // Закрытие диалога с передачей нового пользователя
       this.dialogRef.close(newUser);
+
+      // Сброс формы
       this.myForm.reset();
     } else {
       console.log('Форма невалидна!');
     }
   }
 
+  // Обработчик закрытия диалога без сохранения
   onClose(): void {
     this.dialogRef.close();
   }
 
+  // Обработчик подтверждения
   onConfirm(): void {
     if (this.myForm.valid) {
+      // Создание объекта с обновленными данными пользователя
       const updatedUser: UserElement = {
-        ...this.data.user,
-        ...this.myForm.value,
+        ...this.data.user, // Исходные данные
+        ...this.myForm.value, // Новые значения из формы
       };
       this.dialogRef.close(updatedUser);
     }
